@@ -12,16 +12,19 @@ public class BookDAO {
     private PreparedStatement ps;
     private ResultSet rs;
 
+    /**DB Connection 함수**/
     public void getConnection(){
         try {
             Class.forName(CLASSNAME);
             conn = DriverManager.getConnection(CONNECTION_URL,USERNAME,PASSWORD);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println("ClassNotFoundException 발생");
+        } catch (SQLException e){
+            System.out.println("Connection 단계에서 SQLException 발생");
         }
     }
 
-    /**Book Info INSERT 기능**/
+    /**Book Info INSERT 함수**/
     public void bookRegister(List<Book> bookList){
         String InsertSQL = "insert into booktable(title, price, publisher, authors, sale_price, isbn ) values(?,?,?,?,?,?)";
         getConnection();
@@ -36,16 +39,14 @@ public class BookDAO {
                 ps.setString(6, book.getIsbn());
                 ps.executeUpdate();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("INSERT 단계에서 SQLException 발생");
         } finally {
             dbClose();
         }
     }
 
-    
-
-    /**Book Info SELECT 기능**/
+    /**Book Info SELECT 함수**/
     public List<Book> bookSelect(){
         String SelectSQL = "select * from booktable order by title";
         getConnection();
@@ -63,8 +64,8 @@ public class BookDAO {
                 Book book = new Book(title,price,publisher,authors,sale_price,isbn);
                 bookListDB.add(book);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("SELECT 단계에서 SQLException 발생");
         } finally {
             dbClose();
         }
@@ -72,7 +73,7 @@ public class BookDAO {
     }
 
 
-    /**close기능**/
+    /**DB Connection CLOSE 함수**/
     public void dbClose(){
         try {
             if(rs != null){
@@ -84,8 +85,8 @@ public class BookDAO {
             if(conn != null){
                 conn.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("DB closing 단계에서 SQLException 발생");
         }
     }
 
